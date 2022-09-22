@@ -1,6 +1,9 @@
 const formulario = document.querySelector('#formulario');
 const resultado = document.querySelector('#resultado');
 
+const imagenesPorPagina = 40;
+let paginasTotales;
+
 window.onload = () => {
     formulario.addEventListener('submit', validarFormulario);
 }
@@ -47,12 +50,14 @@ function cargarImagenes (busqueda) {
 
     fetch(url)
         .then( respuesta => respuesta.json())
-        .then( resultado => mostrarImagenes(resultado.hits)); // mando únicamente los hits del resultado.
+        .then( resultado => {
+            paginasTotales = calcularPaginas(resultado.totalHits); // calculo la cantidad de paginas
+            mostrarImagenes(resultado.hits); // mando únicamente los hits del resultado.
+        })
 }
 
 function mostrarImagenes(imagenes) {
     limpiarHTML(); // limpio HTML previo.
-    console.log(imagenes)
 
     // iteración sobre el array y display HTML por c/u.
     imagenes.forEach( imagen => {
@@ -82,4 +87,9 @@ function limpiarHTML() {
     while (resultado.firstChild) {
         resultado.removeChild(resultado.firstChild);
     }
+}
+
+function calcularPaginas (totalImgs) {
+    // redondeo para arriba la cantidad de paginas en base a la cantidad de imagenes x cada una de ellas (40).
+    return Math.ceil(totalImgs / imagenesPorPagina);
 }
