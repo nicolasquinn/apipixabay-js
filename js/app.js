@@ -1,7 +1,3 @@
-// Selectores
-// Evento submit y validación
-// Alerta reutilizable con timeout, y validar que no exista una.
-
 const formulario = document.querySelector('#formulario');
 const resultado = document.querySelector('#resultado');
 
@@ -12,7 +8,7 @@ window.onload = () => {
 function validarFormulario (e) {
     e.preventDefault();
 
-    const busqueda = document.querySelector('#termino').value;
+    const busqueda = document.querySelector('#termino').value; // valido datos input.
 
     if (busqueda === '') {
         mostrarAlerta('Tienes que poner algo');
@@ -20,12 +16,12 @@ function validarFormulario (e) {
     }
 
     // Request API
-
+    cargarImagenes(busqueda);
 }
 
 function mostrarAlerta (msj) {
 
-    const alertaExiste = document.querySelector('p.bg-red-100');
+    const alertaExiste = document.querySelector('p.bg-red-100'); // reviso si hay una alerta ya.
 
     if (!alertaExiste) {
         const alerta = document.createElement('P');
@@ -43,4 +39,17 @@ function mostrarAlerta (msj) {
         }, 3500);
     }
 
+}
+
+function cargarImagenes (busqueda) {
+    const key = '30105334-44a77fadd938340f332227def';
+    const url = `https://pixabay.com/api/?key=${key}&q=${busqueda}`;
+
+    fetch(url)
+        .then( respuesta => respuesta.json())
+        .then( resultado => mostrarImagenes(resultado)); // mando el resultado entero.
+}
+
+function mostrarImagenes(imagenes) {
+    console.log(imagenes.hits);
 }
