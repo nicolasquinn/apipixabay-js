@@ -47,9 +47,39 @@ function cargarImagenes (busqueda) {
 
     fetch(url)
         .then( respuesta => respuesta.json())
-        .then( resultado => mostrarImagenes(resultado)); // mando el resultado entero.
+        .then( resultado => mostrarImagenes(resultado.hits)); // mando únicamente los hits del resultado.
 }
 
 function mostrarImagenes(imagenes) {
-    console.log(imagenes.hits);
+    limpiarHTML(); // limpio HTML previo.
+    console.log(imagenes)
+
+    // iteración sobre el array y display HTML por c/u.
+    imagenes.forEach( imagen => {
+
+        const { likes, views, previewURL, largeImageURL } = imagen;
+        resultado.innerHTML += `
+            <div class="w-1/2 md:w-1/3 lg:w-1/4 mb-4 p-3">
+                <div class="bg-white">
+                    <img class="w-full" src=${previewURL} />
+                    <div class="p-4">
+                        <p class="card-text"><span class="font-bold">${likes}</span> Likes</p>
+                        <p class="card-text"><span class="font-bold">${views}</span> Visualizaciones</p>
+        
+                        <a href=${largeImageURL} 
+                        rel="noopener noreferrer" 
+                        target="_blank" class="bg-blue-800 w-full p-1 block mt-5 rounded text-center font-bold uppercase hover:bg-blue-500 text-white">Ver Imagen</a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+    })
+
+}
+
+function limpiarHTML() {
+    while (resultado.firstChild) {
+        resultado.removeChild(resultado.firstChild);
+    }
 }
