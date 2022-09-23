@@ -1,5 +1,6 @@
 const formulario = document.querySelector('#formulario');
 const resultado = document.querySelector('#resultado');
+const divPaginador = document.querySelector('#paginacion');
 
 const imagenesPorPagina = 40;
 let paginasTotales;
@@ -47,7 +48,7 @@ function mostrarAlerta (msj) {
 
 function cargarImagenes (busqueda) {
     const key = '30105334-44a77fadd938340f332227def';
-    const url = `https://pixabay.com/api/?key=${key}&q=${busqueda}`;
+    const url = `https://pixabay.com/api/?key=${key}&q=${busqueda}&per_page=${imagenesPorPagina}`;
 
     fetch(url)
         .then( respuesta => respuesta.json())
@@ -71,6 +72,7 @@ function calcularPaginas (totalImgs) {
 
 function mostrarImagenes(imagenes) {
 
+    // Limpio HTML de los resultados previos.
     while (resultado.firstChild) {
         resultado.removeChild(resultado.firstChild);
     }
@@ -97,11 +99,32 @@ function mostrarImagenes(imagenes) {
 
     })
 
+    // Limpio el HTML del paginador previo.
+    while(divPaginador.firstChild) {
+        divPaginador.removeChild(divPaginador.firstChild);
+    }
+
+    // Muestro el paginador según la búsqueda.
     mostrarPaginador();
 
 }
 
+// Creo el HTML del paginador.
 function mostrarPaginador () {
-    iterador = crearPaginador(paginasTotales)
-    console.log(iterador.next())
+    iterador = crearPaginador(paginasTotales) // creo el generador.
+
+    while (true) {
+        const { value, done } = iterador.next(); // desestructuro value y done por cada .next()
+        if (done) return; // cuando done sea true, entonces dejo de ejecutar el while.
+
+        // Creo e inserto el HTML por cada yield que tenga el generador.
+        const boton = document.createElement('A');
+        boton.href = '#';
+        boton.dataset.pagina = value;
+        boton.textContent = value;
+        boton.classList.add('siguiente', 'bg-yellow-400', 'px-4', 'py-1', 'mr-2', 'font-bold', 'mb-4', 'uppercase', 'rounded');
+        divPaginador.appendChild(boton);
+
+    }
+
 }
