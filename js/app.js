@@ -3,6 +3,7 @@ const resultado = document.querySelector('#resultado');
 
 const imagenesPorPagina = 40;
 let paginasTotales;
+let iterador;
 
 window.onload = () => {
     formulario.addEventListener('submit', validarFormulario);
@@ -56,8 +57,23 @@ function cargarImagenes (busqueda) {
         })
 }
 
+// Generador que va ir iterando por cada página en base a cuantas haya en total.
+function *crearPaginador (total) {
+    for ( let i = 1; i <= total; i++ ) {
+        yield i;
+    }
+}
+
+function calcularPaginas (totalImgs) {
+    // redondeo para arriba la cantidad de paginas en base a la cantidad de imagenes x cada una de ellas (40).
+    return Math.ceil(totalImgs / imagenesPorPagina);
+}
+
 function mostrarImagenes(imagenes) {
-    limpiarHTML(); // limpio HTML previo.
+
+    while (resultado.firstChild) {
+        resultado.removeChild(resultado.firstChild);
+    }
 
     // iteración sobre el array y display HTML por c/u.
     imagenes.forEach( imagen => {
@@ -81,15 +97,11 @@ function mostrarImagenes(imagenes) {
 
     })
 
+    mostrarPaginador();
+
 }
 
-function limpiarHTML() {
-    while (resultado.firstChild) {
-        resultado.removeChild(resultado.firstChild);
-    }
-}
-
-function calcularPaginas (totalImgs) {
-    // redondeo para arriba la cantidad de paginas en base a la cantidad de imagenes x cada una de ellas (40).
-    return Math.ceil(totalImgs / imagenesPorPagina);
+function mostrarPaginador () {
+    iterador = crearPaginador(paginasTotales)
+    console.log(iterador.next())
 }
