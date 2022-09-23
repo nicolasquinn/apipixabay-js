@@ -5,6 +5,7 @@ const divPaginador = document.querySelector('#paginacion');
 const imagenesPorPagina = 40;
 let paginasTotales;
 let iterador;
+let paginaActual = 1;
 
 window.onload = () => {
     formulario.addEventListener('submit', validarFormulario);
@@ -16,12 +17,12 @@ function validarFormulario (e) {
     const busqueda = document.querySelector('#termino').value; // valido datos input.
 
     if (busqueda === '') {
-        mostrarAlerta('Tienes que poner algo');
+        mostrarAlerta('¡Tenés que poner algo!');
         return;
     }
 
     // Request API
-    cargarImagenes(busqueda);
+    cargarImagenes();
 }
 
 function mostrarAlerta (msj) {
@@ -46,9 +47,11 @@ function mostrarAlerta (msj) {
 
 }
 
-function cargarImagenes (busqueda) {
+function cargarImagenes () {
+
+    const busqueda = document.querySelector('#termino').value; // tomo los datos del input.
     const key = '30105334-44a77fadd938340f332227def';
-    const url = `https://pixabay.com/api/?key=${key}&q=${busqueda}&per_page=${imagenesPorPagina}`;
+    const url = `https://pixabay.com/api/?key=${key}&q=${busqueda}&per_page=${imagenesPorPagina}&page=${paginaActual}`;
 
     fetch(url)
         .then( respuesta => respuesta.json())
@@ -59,8 +62,8 @@ function cargarImagenes (busqueda) {
 }
 
 // Generador que va ir iterando por cada página en base a cuantas haya en total.
-function *crearPaginador (total) {
-    for ( let i = 1; i <= total; i++ ) {
+function *crearPaginador (totalPags) {
+    for ( let i = 1; i <= totalPags; i++ ) {
         yield i;
     }
 }
@@ -122,8 +125,14 @@ function mostrarPaginador () {
         boton.href = '#';
         boton.dataset.pagina = value;
         boton.textContent = value;
-        boton.classList.add('siguiente', 'bg-yellow-400', 'px-4', 'py-1', 'mr-2', 'font-bold', 'mb-4', 'uppercase', 'rounded');
+        boton.classList.add('siguiente', 'bg-yellow-400', 'px-4', 'py-1', 'mr-2', 'font-bold', 'mb-4', 'rounded');
         divPaginador.appendChild(boton);
+
+        // Cuando se clickea el boton, carga devuelta el fetch con la page indicada.
+        boton.onclick = () => {
+            paginaActual = value;
+            cargarImagenes();
+        }
 
     }
 
